@@ -65,12 +65,15 @@ if get_option('default_library') == 'both'
 
   library_type = 'both_libraries'
   library_args = ['-DREREX_INTERNAL']
+  prog_args = []
 elif get_option('default_library') == 'shared'
   library_type = 'shared_library'
   library_args = ['-DREREX_INTERNAL']
+  prog_args = []
 else
   library_type = 'static_library'
   library_args = ['-DREREX_INTERNAL', '-DREREX_STATIC']
+  prog_args = ['-DREREX_STATIC']
 endif
 
 # Build shared and/or static library/libraries
@@ -108,7 +111,7 @@ if get_option('tests')
     test(full_name,
          executable(full_name,
                     source,
-                    c_args: rerex_c_args,
+                    c_args: rerex_c_args + prog_args,
                     include_directories: include_directories(['include']),
                     dependencies: rerex_dep))
   endforeach
