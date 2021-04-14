@@ -1,0 +1,5 @@
+option('strict', type: 'boolean', value: false,
+       description: 'Enable ultra-strict warnings')
+
+option('tests', type: 'boolean', value: true,
+       description: 'Build tests')

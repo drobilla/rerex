@@ -1,0 +1,8 @@
+Checks: >
+  *,
+  -hicpp-multiway-paths-covered,
+  -llvmlibc-*,
+  -misc-no-recursion,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file

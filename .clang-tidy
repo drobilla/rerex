@@ -1,0 +1,6 @@
+Checks: >
+  *,
+  -llvmlibc*,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file
