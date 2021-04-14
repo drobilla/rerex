@@ -76,7 +76,7 @@ endif
 # Build shared and/or static library/libraries
 librerex = build_target(
   versioned_name,
-  ['src/rerex.c'],
+  files('src/rerex.c'),
   version: meson.project_version(),
   include_directories: include_directories(['include']),
   c_args: rerex_c_args + library_args,
@@ -94,7 +94,7 @@ pkg.generate(
   description: 'A simple and efficient regular expression implementation')
 
 # Install header to a versioned include directory
-install_headers(['include/rerex/rerex.h'], subdir: versioned_name / 'rerex')
+install_headers(files('include/rerex/rerex.h'), subdir: versioned_name / 'rerex')
 
 rerex_dep = declare_dependency(
   link_with: librerex,
@@ -104,16 +104,17 @@ rerex_dep = declare_dependency(
 if get_option('tests')
   foreach name : ['syntax', 'match', 'xsd']
     full_name = 'test_@0@'.format(name)
+    source = files('test/@0@.c'.format(full_name))
     test(full_name,
          executable(full_name,
-                    'test/@0@.c'.format(full_name),
+                    source,
                     c_args: rerex_c_args,
                     include_directories: include_directories(['include']),
                     dependencies: rerex_dep))
   endforeach
 endif
 
-if meson.version().version_compare('>=0.53.0')
+if not meson.is_subproject() and meson.version().version_compare('>=0.53.0')
   summary('Tests', get_option('tests'), bool_yn: true)
 
   summary('Install prefix', get_option('prefix'))
