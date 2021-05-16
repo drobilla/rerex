@@ -1,5 +1,5 @@
 /*
-  Copyright 2020 David Robillard <d@drobilla.net>
+  Copyright 2020-2021 David Robillard <d@drobilla.net>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -137,11 +137,11 @@ add_state(StateArray* const array, const State state)
 }
 
 /* Automata.
- *
- * This is a lightweiht description of an NFA fragment.  The states are stored
- * elsewhere, this is just used to provide a facade to conceptually work with
- * automata for high-level operations.
- */
+
+   This is a lightweight description of an NFA fragment.  The states are stored
+   elsewhere, this is just used to provide a facade to conceptually work with
+   automata for high-level operations.
+*/
 typedef struct {
   StateIndex start;
   StateIndex end;
@@ -236,11 +236,11 @@ alternate(StateArray* const states, const Automata a, const Automata b)
 }
 
 /* Parser input.
- *
- * The parser reads from a string one character at a time, though it would be
- * simple to change this to read from any stream.  All reading is done by three
- * operations: peek, peekahead, and eat.
- */
+
+   The parser reads from a string one character at a time, though it would be
+   simple to change this to read from any stream.  All reading is done by three
+   operations: peek, peekahead, and eat.
+*/
 typedef struct {
   const char* const str;
   size_t            offset;
@@ -608,11 +608,11 @@ read_expr(Input* const input, StateArray* const states, Automata* const out)
 }
 
 /* Pattern.
- *
- * A pattern is simply an array of states and an index to the start state.  The
- * end state(s) are known because they have type REREX_MATCH.  A pattern is
- * immutable after construction, the matcher does not modify it.
- */
+
+   A pattern is simply an array of states and an index to the start state.  The
+   end state(s) are known because they have type REREX_MATCH.  A pattern is
+   immutable after construction, the matcher does not modify it.
+*/
 struct RerexPatternImpl {
   StateArray states;
   StateIndex start;
@@ -658,14 +658,14 @@ typedef struct {
 } IndexList;
 
 /* Matcher.
- *
- * The matcher tracks active states by keeping two lists of indices: one for
- * the current iteration, and one for the next.  A separate array, keyed by
- * state index, stores the number of the last iteration the state was entered
- * in.  This makes it simple and fast to check if a state has already been
- * entered in the current iteration, avoiding the need to search the active
- * list for every entered state.
- */
+
+   The matcher tracks active states by keeping two lists of indices: one for
+   the current iteration, and one for the next.  A separate array, keyed by
+   state index, stores the number of the last iteration the state was entered
+   in.  This makes it simple and fast to check if a state has already been
+   entered in the current iteration, avoiding the need to search the active
+   list for every entered state.
+*/
 struct RerexMatcherImpl {
   const RerexPattern* regexp;      // Pattern to match against
   IndexList           active[2];   // Two lists of active states
