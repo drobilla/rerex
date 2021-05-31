@@ -34,7 +34,6 @@ if get_option('strict')
     ]
   elif cc.get_id() == 'msvc'
     c_suppressions = [
-      '/wd4706',  # assignment within conditional expression
       '/wd4711',  # function selected for automatic inline expansion
       '/wd4800',  # implicit conversion to bool
       '/wd5045',  # will insert Spectre mitigation
@@ -42,6 +41,12 @@ if get_option('strict')
   else
     c_suppressions = []
   endif
+endif
+
+if cc.get_id() == 'msvc'
+  c_suppressions += [
+    '/wd4706',  # assignment within conditional expression
+  ]
 endif
 
 rerex_c_args = cc.get_supported_arguments(c_suppressions)
