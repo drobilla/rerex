@@ -58,6 +58,7 @@ if cc.get_id() == 'msvc'
 endif
 
 # Determine library type and the flags needed to build it
+library_name = versioned_name
 if get_option('default_library') == 'both'
   if host_machine.system() == 'windows'
     error('default_library=both is not supported on Windows')
@@ -67,6 +68,11 @@ if get_option('default_library') == 'both'
   library_args = ['-DREREX_INTERNAL']
   prog_args = []
 elif get_option('default_library') == 'shared'
+  if host_machine.system() == 'windows'
+    # Meson annoyingly adds its own suffix, so remove this one
+    library_name = 'rerex'
+  endif
+
   library_type = 'shared_library'
   library_args = ['-DREREX_INTERNAL']
   prog_args = []
@@ -78,7 +84,7 @@ endif
 
 # Build shared and/or static library/libraries
 librerex = build_target(
-  versioned_name,
+  library_name,
   files('src/rerex.c'),
   version: meson.project_version(),
   include_directories: include_directories(['include']),
