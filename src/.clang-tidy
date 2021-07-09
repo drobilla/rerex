@@ -1,5 +1,6 @@
 Checks: >
   *,
+  -altera-struct-pack-align,
   -hicpp-multiway-paths-covered,
   -llvmlibc-*,
   -misc-no-recursion,
