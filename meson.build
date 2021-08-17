@@ -116,6 +116,11 @@ rerex_dep = declare_dependency(
 
 # Build and run tests
 if get_option('tests')
+  autoship = find_program('autoship', required: false)
+  if autoship.found()
+    test('autoship', autoship, args: ['test', meson.current_source_dir()])
+  endif
+
   foreach name : ['syntax', 'match', 'xsd']
     full_name = 'test_@0@'.format(name)
     source = files('test/@0@.c'.format(full_name))
