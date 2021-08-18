@@ -1,3 +1,6 @@
+# Copyright 2020-2021 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: CC0-1.0 OR ISC
+
 project('rerex', ['c'],
         version: '0.0.1',
         license: 'ISC',
@@ -119,6 +122,11 @@ if get_option('tests')
   autoship = find_program('autoship', required: false)
   if autoship.found()
     test('autoship', autoship, args: ['test', meson.current_source_dir()])
+  endif
+
+  reuse = find_program('reuse', required: false)
+  if reuse.found()
+    test('REUSE', reuse, args: ['lint'])
   endif
 
   foreach name : ['syntax', 'match', 'xsd']
