@@ -126,7 +126,9 @@ if get_option('tests')
 
   reuse = find_program('reuse', required: false)
   if reuse.found()
-    test('REUSE', reuse, args: ['lint'])
+    test('REUSE', reuse,
+         args: ['--root', meson.current_source_dir(), 'lint'],
+         suite: 'data')
   endif
 
   foreach name : ['syntax', 'match', 'xsd']
