@@ -121,7 +121,9 @@ rerex_dep = declare_dependency(
 if get_option('tests')
   autoship = find_program('autoship', required: false)
   if autoship.found()
-    test('autoship', autoship, args: ['test', meson.current_source_dir()])
+    test('autoship', autoship,
+         args: ['test', meson.current_source_dir()],
+         suite: 'data')
   endif
 
   reuse = find_program('reuse', required: false)
@@ -139,7 +141,8 @@ if get_option('tests')
                     source,
                     c_args: rerex_c_args + prog_args,
                     include_directories: include_directories(['include']),
-                    dependencies: rerex_dep))
+                    dependencies: rerex_dep),
+         suite: 'unit')
   endforeach
 endif
 
