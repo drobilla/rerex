@@ -1,6 +1,6 @@
 Checks: >
   *,
-  -altera-struct-pack-align,
+  -altera-*,
   -llvmlibc*,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

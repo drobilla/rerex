@@ -3,6 +3,6 @@ Upstream-Name: rerex
 Upstream-Contact: David Robillard <d@drobilla.net>
 Source: https://gitlab.com/drobilla/rerex
 
-Files: *.md .clang* .git* NEWS meson_options.txt src/.clang*
+Files: *.md .clang* .git* NEWS meson_options.txt src/.clang* test/.clang*
 Copyright: 2020-2021 David Robillard <d@drobilla.net>
 License: CC0-1.0 OR ISC

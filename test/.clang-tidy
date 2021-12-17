@@ -1,9 +1,8 @@
 Checks: >
   *,
   -altera-*,
-  -hicpp-multiway-paths-covered,
-  -llvmlibc-*,
-  -misc-no-recursion,
+  -bugprone-easily-swappable-parameters,
+  -llvmlibc*,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file
