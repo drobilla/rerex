@@ -133,15 +133,17 @@ if get_option('tests')
          suite: 'data')
   endif
 
-  cppcheck = find_program('cppcheck', required: false)
-  if cppcheck.found()
-    compdb_path = join_paths(meson.build_root(), 'compile_commands.json')
-    test('cppcheck', cppcheck,
-         args: ['-q',
-                '--error-exitcode=1',
-                '--enable=warning,style,performance,portability',
-                '--project=' + compdb_path],
-         suite: 'code')
+  if not meson.is_subproject()
+    cppcheck = find_program('cppcheck', required: false)
+    if cppcheck.found()
+      compdb_path = join_paths(meson.current_build_dir(), 'compile_commands.json')
+      test('cppcheck', cppcheck,
+           args: ['-q',
+                  '--error-exitcode=1',
+                  '--enable=warning,style,performance,portability',
+                  '--project=' + compdb_path],
+           suite: 'code')
+    endif
   endif
 
   foreach name : ['syntax', 'match', 'xsd']
