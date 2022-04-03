@@ -53,7 +53,13 @@ static const BadSyntaxTestCase syntax_tests[] = {
 static void
 test_status(void)
 {
+  assert(!strcmp(rerex_strerror(REREX_SUCCESS), "Success"));
+  assert(!strcmp(rerex_strerror(REREX_NO_MEMORY), "Failed to allocate memory"));
+
+  assert(!strcmp(rerex_strerror((RerexStatus)((int)REREX_NO_MEMORY + 1)),
+                 "Unknown error"));
   assert(!strcmp(rerex_strerror((RerexStatus)INT32_MAX), "Unknown error"));
+  assert(!strcmp(rerex_strerror((RerexStatus)UINT32_MAX), "Unknown error"));
 }
 
 static void

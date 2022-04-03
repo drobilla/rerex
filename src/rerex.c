@@ -34,6 +34,8 @@ rerex_strerror(const RerexStatus status)
     return "Unexpected end of input";
   case REREX_UNORDERED_RANGE:
     return "Range is out of order";
+  case REREX_NO_MEMORY:
+    return "Failed to allocate memory";
   }
 
   return "Unknown error";
@@ -114,13 +116,18 @@ typedef struct {
 static StateIndex
 add_state(StateArray* const array, const State state)
 {
-  const size_t new_n_states = array->n_states + 1;
+  const size_t new_index    = array->n_states;
+  const size_t new_n_states = new_index + 1;
   const size_t new_size     = new_n_states * sizeof(State);
+  State* const new_states   = (State*)realloc(array->states, new_size);
 
-  array->states                  = (State*)realloc(array->states, new_size);
-  array->states[array->n_states] = state;
+  if (new_states) {
+    new_states[new_index] = state;
+    array->states         = new_states;
+    array->n_states       = new_n_states;
+  }
 
-  return array->n_states++;
+  return new_states ? new_index : NO_STATE;
 }
 
 /* Automata.
@@ -624,16 +631,21 @@ rerex_compile(const char* const    pattern,
   // Add null state so that no actual state has NO_STATE as an ID
   add_state(&states, split_state(NO_STATE, NO_STATE));
 
-  const RerexStatus st = read_expr(&input, &states, &nfa);
-  if (st) {
-    free(states.states);
-  } else {
-    *out           = (RerexPattern*)malloc(sizeof(RerexPattern));
-    (*out)->states = states;
-    (*out)->start  = nfa.start;
+  RerexStatus st = states.states ? REREX_SUCCESS : REREX_NO_MEMORY;
+  if (!st) {
+    // Read the expression, building the NFA and its states array
+    st   = read_expr(&input, &states, &nfa);
+    *end = input.offset;
   }
 
-  *end = input.offset;
+  // "Return" a newly allocated pattern
+  if (!st && (*out = (RerexPattern*)malloc(sizeof(RerexPattern)))) {
+    (*out)->states = states;
+    (*out)->start  = nfa.start;
+    return REREX_SUCCESS;
+  }
+
+  free(states.states);
   return st;
 }
 
@@ -665,10 +677,12 @@ rerex_new_matcher(const RerexPattern* const regexp)
   const size_t        n_states = regexp->states.n_states;
   RerexMatcher* const m        = (RerexMatcher*)calloc(1, sizeof(RerexMatcher));
 
-  m->regexp            = regexp;
-  m->active[0].indices = (StateIndex*)calloc(n_states, sizeof(StateIndex));
-  m->active[1].indices = (StateIndex*)calloc(n_states, sizeof(StateIndex));
-  m->last_active       = (size_t*)calloc(n_states, sizeof(size_t));
+  if (m) {
+    m->regexp            = regexp;
+    m->active[0].indices = (StateIndex*)calloc(n_states, sizeof(StateIndex));
+    m->active[1].indices = (StateIndex*)calloc(n_states, sizeof(StateIndex));
+    m->last_active       = (size_t*)calloc(n_states, sizeof(size_t));
+  }
 
   return m;
 }
@@ -676,10 +690,12 @@ rerex_new_matcher(const RerexPattern* const regexp)
 void
 rerex_free_matcher(RerexMatcher* const matcher)
 {
-  free(matcher->last_active);
-  free(matcher->active[1].indices);
-  free(matcher->active[0].indices);
-  free(matcher);
+  if (matcher) {
+    free(matcher->last_active);
+    free(matcher->active[1].indices);
+    free(matcher->active[0].indices);
+    free(matcher);
+  }
 }
 
 // Add `s` and any epsilon successors to the active list

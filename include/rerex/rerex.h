@@ -38,6 +38,7 @@ typedef enum {
   REREX_UNEXPECTED_SPECIAL,
   REREX_UNEXPECTED_END,
   REREX_UNORDERED_RANGE,
+  REREX_NO_MEMORY,
 } RerexStatus;
 
 /// Pattern that represents a compiled valid regular expression
