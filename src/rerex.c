@@ -720,7 +720,6 @@ enter_state(RerexMatcher* const matcher,
   }
 }
 
-// Run `matcher` and return true if `string` matches the expression
 bool
 rerex_match(RerexMatcher* const matcher, const char* const string)
 {
