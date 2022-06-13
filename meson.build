@@ -1,107 +1,60 @@
-# Copyright 2020-2021 David Robillard <d@drobilla.net>
+# Copyright 2020-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 project('rerex', ['c'],
         version: '0.0.1',
         license: 'ISC',
-        meson_version: '>= 0.49.0',
+        meson_version: '>= 0.53.0',
         default_options: [
           'b_ndebug=if-release',
           'buildtype=release',
           'c_std=c99',
-          'default_library=shared',
-          'warning_level=3',
         ])
 
+rerex_src_root = meson.current_source_dir()
+rerex_build_root = meson.current_build_dir()
 major_version = meson.project_version().split('.')[0]
 version_suffix = '-@0@'.format(major_version)
 versioned_name = 'rerex' + version_suffix
 
-# Load build tools
+#######################
+# Compilers and Flags #
+#######################
+
+# Required tools
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
-# Set ultra strict warnings for developers, if requested
-c_warnings = []
-c_suppressions = []
-if get_option('strict')
-  if not meson.is_subproject()
-    subdir('meson')
-    add_project_arguments(all_c_warnings, language: ['c'])
-  endif
+# Set global warning flags
+subdir('meson/warnings')
+subdir('meson/suppressions')
 
-  if cc.get_id() == 'gcc'
-    c_suppressions = [
-      '-Wno-aggregate-return',
-      '-Wno-switch-default',
-    ]
-  elif cc.get_id() == 'msvc'
-    c_suppressions = [
-      '/wd4711',  # function selected for automatic inline expansion
-      '/wd4800',  # implicit conversion to bool
-      '/wd5045',  # will insert Spectre mitigation
-    ]
-  else
-    c_suppressions = []
-  endif
+###########
+# Library #
+###########
+
+include_dirs = include_directories(['include'])
+c_headers = files('include/rerex/rerex.h')
+sources = files('src/rerex.c')
+
+# Set appropriate arguments for building against the library type
+subdir('meson/library')
+if library_type == 'static_library'
+  add_project_arguments(['-DSERD_STATIC'], language: ['c'])
 endif
 
-if cc.get_id() == 'msvc'
-  c_suppressions += [
-    '/wd4706',  # assignment within conditional expression
-  ]
-endif
-
-rerex_c_args = cc.get_supported_arguments(c_suppressions)
-
-if cc.get_id() == 'msvc'
-  # Build as C++
-  add_project_arguments(['/TP'], language: ['c'])
-
-  # Suppress warnings in system headers
-  add_project_arguments(['/experimental:external',
-                         '/external:W0',
-                         '/external:anglebrackets'],
-                        language: ['c'])
-endif
-
-# Determine library type and the flags needed to build it
-library_name = versioned_name
-if get_option('default_library') == 'both'
-  if host_machine.system() == 'windows'
-    error('default_library=both is not supported on Windows')
-  endif
-
-  library_type = 'both_libraries'
-  library_args = ['-DREREX_INTERNAL']
-  prog_args = []
-elif get_option('default_library') == 'shared'
-  if host_machine.system() == 'windows'
-    # Meson annoyingly adds its own suffix, so remove this one
-    library_name = 'rerex'
-  endif
-
-  library_type = 'shared_library'
-  library_args = ['-DREREX_INTERNAL']
-  prog_args = []
-else
-  library_type = 'static_library'
-  library_args = ['-DREREX_INTERNAL', '-DREREX_STATIC']
-  prog_args = ['-DREREX_STATIC']
-endif
-
-# Build shared and/or static library/libraries
+# Build shared and/or static library
 librerex = build_target(
-  library_name,
-  files('src/rerex.c'),
+  meson.project_name() + library_suffix,
+  sources,
   version: meson.project_version(),
-  include_directories: include_directories(['include']),
-  c_args: rerex_c_args + library_args,
+  include_directories: include_dirs,
+  c_args: ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
   install: true,
   target_type: library_type)
 
-# Generage pkg-config file
+# Generage pkg-config file for external dependants
 pkg.generate(
   librerex,
   name: 'Rerex',
@@ -110,58 +63,26 @@ pkg.generate(
   version: meson.project_version(),
   description: 'A simple and efficient regular expression implementation')
 
-# Install header to a versioned include directory
-install_headers(files('include/rerex/rerex.h'), subdir: versioned_name / 'rerex')
-
+# Declare dependency for internal meson dependants
 rerex_dep = declare_dependency(
   link_with: librerex,
-  include_directories: include_directories(['include']))
+  include_directories: include_dirs)
+
+# Install header to a versioned include directory
+install_headers(c_headers, subdir: versioned_name / 'rerex')
+
+#########
+# Tests #
+#########
 
 # Build and run tests
 if get_option('tests')
-  autoship = find_program('autoship', required: false)
-  if autoship.found()
-    test('autoship', autoship,
-         args: ['test', meson.current_source_dir()],
-         suite: 'data')
-  endif
-
-  reuse = find_program('reuse', required: false)
-  if reuse.found()
-    test('REUSE', reuse,
-         args: ['--root', meson.current_source_dir(), 'lint'],
-         suite: 'data')
-  endif
-
-  if not meson.is_subproject()
-    cppcheck = find_program('cppcheck', required: false)
-    if cppcheck.found()
-      compdb_path = join_paths(meson.current_build_dir(), 'compile_commands.json')
-      test('cppcheck', cppcheck,
-           args: ['-q',
-                  '--error-exitcode=1',
-                  '--enable=warning,style,performance,portability',
-                  '--project=' + compdb_path],
-           suite: 'code')
-    endif
-  endif
-
-  foreach name : ['syntax', 'match', 'xsd']
-    full_name = 'test_@0@'.format(name)
-    source = files('test/@0@.c'.format(full_name))
-    test(full_name,
-         executable(full_name,
-                    source,
-                    c_args: rerex_c_args + prog_args,
-                    include_directories: include_directories(['include']),
-                    dependencies: rerex_dep),
-         suite: 'unit')
-  endforeach
+  subdir('test')
 endif
 
-if not meson.is_subproject() and meson.version().version_compare('>=0.53.0')
+# Display configuration summary
+if not meson.is_subproject()
   summary('Tests', get_option('tests'), bool_yn: true)
-
   summary('Install prefix', get_option('prefix'))
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))
