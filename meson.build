@@ -39,20 +39,19 @@ sources = files('src/rerex.c')
 
 # Set appropriate arguments for building against the library type
 subdir('meson/library')
-if library_type == 'static_library'
+if get_option('default_library') == 'static'
   add_project_arguments(['-DREREX_STATIC'], language: ['c'])
 endif
 
 # Build shared and/or static library
-librerex = build_target(
+librerex = library(
   meson.project_name() + library_suffix,
   sources,
   version: meson.project_version(),
   include_directories: include_dirs,
   c_args: ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
-  install: true,
-  target_type: library_type)
+  install: true)
 
 # Generage pkg-config file for external dependants
 pkg.generate(
