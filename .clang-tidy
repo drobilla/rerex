@@ -1,7 +1,0 @@
-Checks: >
-  *,
-  -altera-*,
-  -llvmlibc*,
-WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
-FormatStyle: file
