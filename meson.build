@@ -49,7 +49,7 @@ librerex = library(
   sources,
   version: meson.project_version(),
   include_directories: include_dirs,
-  c_args: ['-DREREX_INTERNAL'],
+  c_args: c_warnings + ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
   install: true)
 

@@ -38,7 +38,15 @@ foreach name : ['syntax', 'match', 'xsd']
   test(full_name,
        executable(full_name,
                   source,
-                  include_directories: include_dirs,
-                  dependencies: rerex_dep),
+                  c_args: c_warnings,
+                  dependencies: rerex_dep,
+                  include_directories: include_dirs),
        suite: 'unit')
 endforeach
+
+test('test_headers',
+     executable('test_headers',
+                files('headers/test_headers.c'),
+                c_args: all_c_warnings,
+                dependencies: rerex_dep,
+                include_directories: include_dirs))
