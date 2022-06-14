@@ -40,7 +40,7 @@ sources = files('src/rerex.c')
 # Set appropriate arguments for building against the library type
 subdir('meson/library')
 if library_type == 'static_library'
-  add_project_arguments(['-DSERD_STATIC'], language: ['c'])
+  add_project_arguments(['-DREREX_STATIC'], language: ['c'])
 endif
 
 # Build shared and/or static library
