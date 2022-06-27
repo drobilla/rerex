@@ -7,31 +7,32 @@
 # enables all reasonable warnings for the compiler.  It lives here just to keep
 # the top-level meson.build more readable.
 
-c_suppressions = []
+#####
+# C #
+#####
 
-if get_option('strict')
-  if cc.get_id() == 'clang' and host_machine.system() == 'darwin'
+if is_variable('cc')
+  c_suppressions = []
+
+  if get_option('strict')
+    if cc.get_id() == 'gcc'
+      c_suppressions += [
+        '-Wno-switch-default',
+      ]
+    elif cc.get_id() == 'msvc'
+      c_suppressions += [
+        '/wd4711', # function selected for automatic inline expansion
+        '/wd4800', # implicit conversion to bool
+        '/wd5045', # will insert Spectre mitigation
+      ]
+    endif
+  endif
+
+  if cc.get_id() == 'msvc'
     c_suppressions += [
-      '-Wno-poison-system-directories',
-    ]
-  elif cc.get_id() == 'gcc'
-    c_suppressions += [
-      '-Wno-switch-default',
-    ]
-  elif cc.get_id() == 'msvc'
-    c_suppressions += [
-      '/wd4711', # function selected for automatic inline expansion
-      '/wd4800', # implicit conversion to bool
-      '/wd5045', # will insert Spectre mitigation
+      '/wd4706', # assignment within conditional expression
     ]
   endif
-endif
 
-if cc.get_id() == 'msvc'
-  c_suppressions += [
-    '/wd4706', # assignment within conditional expression
-  ]
+  c_suppressions = cc.get_supported_arguments(c_suppressions)
 endif
-
-c_suppressions = cc.get_supported_arguments(c_suppressions)
-c_warnings = all_c_warnings + c_suppressions

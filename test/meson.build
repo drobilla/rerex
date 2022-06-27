@@ -38,15 +38,15 @@ foreach name : ['syntax', 'match', 'xsd']
   test(full_name,
        executable(full_name,
                   source,
-                  c_args: c_warnings,
+                  c_args: c_suppressions,
                   dependencies: rerex_dep,
                   include_directories: include_dirs),
        suite: 'unit')
 endforeach
 
+# Test that header has no warnings (ignoring suppressions for stricter dependants)
 test('test_headers',
      executable('test_headers',
                 files('headers/test_headers.c'),
-                c_args: all_c_warnings,
                 dependencies: rerex_dep,
                 include_directories: include_dirs))

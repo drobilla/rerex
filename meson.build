@@ -26,7 +26,10 @@ pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
 # Set global warning flags
-subdir('meson/warnings')
+if get_option('strict') and not meson.is_subproject()
+  subdir('meson/warnings')
+  add_project_arguments(all_c_warnings, language: ['c'])
+endif
 subdir('meson/suppressions')
 
 ###########
@@ -49,7 +52,7 @@ librerex = library(
   sources,
   version: meson.project_version(),
   include_directories: include_dirs,
-  c_args: c_warnings + ['-DREREX_INTERNAL'],
+  c_args: c_suppressions + ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
   install: true)
 

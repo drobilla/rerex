@@ -29,6 +29,10 @@
 # Wtrampolines
 # Wvla-larger-than=BYTES
 #
+# Build specific:
+#
+# Wpoison-system-directories
+#
 # C Specific:
 #
 # Wc11-c2x-compat
@@ -122,36 +126,50 @@ gcc_common_warnings = [
   '-Wwrite-strings',
 ]
 
-# Set all_c_warnings for the current C compiler
-all_c_warnings = []
-if get_option('strict')
-  if cc.get_id() == 'clang'
-    all_c_warnings += ['-Weverything']
-  elif cc.get_id() == 'gcc'
-    all_c_warnings += gcc_common_warnings + [
-      '-Wabsolute-value',
-      '-Wbad-function-cast',
-      '-Wc++-compat',
-      '-Wenum-conversion',
-      '-Wjump-misses-init',
-      '-Wmissing-parameter-type',
-      '-Wmissing-prototypes',
-      '-Wnested-externs',
-      '-Wold-style-declaration',
-      '-Wold-style-definition',
-      '-Woverride-init',
-      '-Wsign-compare',
-      '-Wstrict-prototypes',
-      '-Wunsuffixed-float-constants',
-    ]
-  elif cc.get_id() == 'msvc'
-    all_c_warnings += [
-      '/Wall',
-      '/experimental:external',
-      '/external:W0',
-      '/external:anglebrackets',
-    ]
-  endif
-endif
+#####
+# C #
+#####
 
-all_c_warnings = cc.get_supported_arguments(all_c_warnings)
+if is_variable('cc')
+  all_c_warnings = []
+
+  if get_option('strict')
+    if cc.get_id() == 'clang'
+      all_c_warnings += ['-Weverything']
+
+      if not meson.is_cross_build()
+        all_c_warnings += [
+          '-Wno-poison-system-directories',
+        ]
+      endif
+
+    elif cc.get_id() == 'gcc'
+      all_c_warnings += gcc_common_warnings + [
+        '-Wabsolute-value',
+        '-Wbad-function-cast',
+        '-Wc++-compat',
+        '-Wenum-conversion',
+        '-Wjump-misses-init',
+        '-Wmissing-parameter-type',
+        '-Wmissing-prototypes',
+        '-Wnested-externs',
+        '-Wold-style-declaration',
+        '-Wold-style-definition',
+        '-Woverride-init',
+        '-Wsign-compare',
+        '-Wstrict-prototypes',
+        '-Wunsuffixed-float-constants',
+      ]
+
+    elif cc.get_id() == 'msvc'
+      all_c_warnings += [
+        '/Wall',
+        '/experimental:external',
+        '/external:W0',
+        '/external:anglebrackets',
+      ]
+    endif
+  endif
+
+  all_c_warnings = cc.get_supported_arguments(all_c_warnings)
+endif
