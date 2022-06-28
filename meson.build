@@ -78,13 +78,13 @@ install_headers(c_headers, subdir: versioned_name / 'rerex')
 #########
 
 # Build and run tests
-if get_option('tests')
+if not get_option('tests').disabled()
   subdir('test')
 endif
 
 # Display configuration summary
 if not meson.is_subproject()
-  summary('Tests', get_option('tests'), bool_yn: true)
+  summary('Tests', not get_option('tests').disabled(), bool_yn: true)
   summary('Install prefix', get_option('prefix'))
   summary('Headers', get_option('prefix') / get_option('includedir'))
   summary('Libraries', get_option('prefix') / get_option('libdir'))
