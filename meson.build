@@ -41,36 +41,39 @@ c_headers = files('include/rerex/rerex.h')
 sources = files('src/rerex.c')
 
 # Set appropriate arguments for building against the library type
+extra_c_args = []
 subdir('meson/library')
 if get_option('default_library') == 'static'
-  add_project_arguments(['-DREREX_STATIC'], language: ['c'])
+  extra_c_args = ['-DREREX_STATIC']
 endif
 
 # Build shared and/or static library
 librerex = library(
   meson.project_name() + library_suffix,
   sources,
-  c_args: c_suppressions + ['-DREREX_INTERNAL'],
+  c_args: c_suppressions + extra_c_args + ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
   install: true,
   version: meson.project_version(),
 )
 
+# Declare dependency for internal meson dependants
+rerex_dep = declare_dependency(
+  compile_args: extra_c_args,
+  include_directories: include_dirs,
+  link_with: librerex,
+)
+
 # Generage pkg-config file for external dependants
 pkg.generate(
   librerex,
   description: 'A simple and efficient regular expression implementation',
+  extra_cflags: extra_c_args,
   filebase: versioned_name,
   name: 'Rerex',
   subdirs: [versioned_name],
   version: meson.project_version(),
-)
-
-# Declare dependency for internal meson dependants
-rerex_dep = declare_dependency(
-  include_directories: include_dirs,
-  link_with: librerex,
 )
 
 # Install header to a versioned include directory
