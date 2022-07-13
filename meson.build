@@ -50,25 +50,28 @@ endif
 librerex = library(
   meson.project_name() + library_suffix,
   sources,
-  version: meson.project_version(),
-  include_directories: include_dirs,
   c_args: c_suppressions + ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
-  install: true)
+  include_directories: include_dirs,
+  install: true,
+  version: meson.project_version(),
+)
 
 # Generage pkg-config file for external dependants
 pkg.generate(
   librerex,
-  name: 'Rerex',
+  description: 'A simple and efficient regular expression implementation',
   filebase: versioned_name,
+  name: 'Rerex',
   subdirs: [versioned_name],
   version: meson.project_version(),
-  description: 'A simple and efficient regular expression implementation')
+)
 
 # Declare dependency for internal meson dependants
 rerex_dep = declare_dependency(
+  include_directories: include_dirs,
   link_with: librerex,
-  include_directories: include_dirs)
+)
 
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'rerex')
