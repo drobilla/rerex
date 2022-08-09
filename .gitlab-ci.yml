@@ -73,6 +73,15 @@ x64_sanitize:
     LDFLAGS: "-fno-sanitize-recover=all -fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds -fsanitize=nullability"
 
 
+fedora:
+  image: lv2plugin/fedora-dev
+  script:
+    - meson setup build -Dbuildtype=plain -Dstrict=true -Dwerror=true
+    - ninja -C build test
+  variables:
+    CFLAGS: -O2 -D_FORTIFY_SOURCE=2
+
+
 freebsd_dbg:
   tags: [freebsd,meson]
   script:
