@@ -76,6 +76,9 @@ pkg.generate(
   version: meson.project_version(),
 )
 
+# Override pkg-config dependency for internal meson dependants
+meson.override_dependency(versioned_name, rerex_dep)
+
 # Install header to a versioned include directory
 install_headers(c_headers, subdir: versioned_name / 'rerex')
 
