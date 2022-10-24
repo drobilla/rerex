@@ -3,6 +3,7 @@ Checks: >
   -altera-*,
   -bugprone-easily-swappable-parameters,
   -llvmlibc*,
+  -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file

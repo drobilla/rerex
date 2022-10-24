@@ -4,6 +4,7 @@ Checks: >
   -hicpp-multiway-paths-covered,
   -llvmlibc-*,
   -misc-no-recursion,
+  -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle: file

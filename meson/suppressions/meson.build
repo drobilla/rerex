@@ -15,7 +15,11 @@ if is_variable('cc')
   c_suppressions = []
 
   if get_option('strict')
-    if cc.get_id() == 'gcc'
+    if cc.get_id() == 'clang'
+      c_suppressions += [
+        '-Wno-declaration-after-statement',
+      ]
+    elif cc.get_id() == 'gcc'
       c_suppressions += [
         '-Wno-switch-default',
       ]
