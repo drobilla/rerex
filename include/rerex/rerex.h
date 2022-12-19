@@ -7,16 +7,20 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#if defined(_WIN32) && !defined(REREX_STATIC) && defined(REREX_INTERNAL)
-#  define REREX_API __declspec(dllexport)
-#elif defined(_WIN32) && !defined(REREX_STATIC)
-#  define REREX_API __declspec(dllimport)
-#elif defined(__GNUC__)
-#  define REREX_API __attribute__((visibility("default")))
-#else
-#  define REREX_API
+// REREX_API must be used to decorate things in the public API
+#ifndef REREX_API
+#  if defined(_WIN32) && !defined(REREX_STATIC) && defined(REREX_INTERNAL)
+#    define REREX_API __declspec(dllexport)
+#  elif defined(_WIN32) && !defined(REREX_STATIC)
+#    define REREX_API __declspec(dllimport)
+#  elif defined(__GNUC__)
+#    define REREX_API __attribute__((visibility("default")))
+#  else
+#    define REREX_API
+#  endif
 #endif
 
+// GCC function attributes
 #if defined(__GNUC__)
 #  define REREX_CONST_API __attribute__((const)) REREX_API
 #else
