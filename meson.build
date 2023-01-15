@@ -32,6 +32,16 @@ if get_option('strict') and not meson.is_subproject()
 endif
 subdir('meson/suppressions')
 
+##########################
+# Platform Configuration #
+##########################
+
+if host_machine.system() == 'windows'
+  soversion = ''
+else
+  soversion = meson.project_version().split('.')[0]
+endif
+
 ###########
 # Library #
 ###########
@@ -42,19 +52,19 @@ sources = files('src/rerex.c')
 
 # Set appropriate arguments for building against the library type
 extra_c_args = []
-subdir('meson/library')
 if get_option('default_library') == 'static'
   extra_c_args = ['-DREREX_STATIC']
 endif
 
 # Build shared and/or static library
 librerex = library(
-  meson.project_name() + library_suffix,
+  versioned_name,
   sources,
   c_args: c_suppressions + extra_c_args + ['-DREREX_INTERNAL'],
   gnu_symbol_visibility: 'hidden',
   include_directories: include_dirs,
   install: true,
+  soversion: soversion,
   version: meson.project_version(),
 )
 
