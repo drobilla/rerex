@@ -1,9 +1,11 @@
 Checks: >
   *,
   -altera-*,
+  -bugprone-assignment-in-if-condition,
   -hicpp-multiway-paths-covered,
   -llvmlibc-*,
   -misc-no-recursion,
+  -modernize-macro-to-enum,
   -readability-identifier-length,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
