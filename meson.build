@@ -1,4 +1,4 @@
-# Copyright 2020-2022 David Robillard <d@drobilla.net>
+# Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: CC0-1.0 OR ISC
 
 project('rerex', ['c'],
@@ -25,12 +25,46 @@ versioned_name = 'rerex' + version_suffix
 pkg = import('pkgconfig')
 cc = meson.get_compiler('c')
 
-# Set global warning flags
-if get_option('strict') and not meson.is_subproject()
-  subdir('meson/warnings')
-  add_project_arguments(all_c_warnings, language: ['c'])
+# Set global warning suppressions
+c_suppressions = []
+warning_level = get_option('warning_level')
+if cc.get_id() == 'clang'
+  if warning_level == 'everything'
+    c_suppressions += [
+      '-Wno-declaration-after-statement',
+    ]
+
+    if not meson.is_cross_build()
+      c_suppressions += [
+        '-Wno-poison-system-directories',
+      ]
+    endif
+  endif
+
+elif cc.get_id() == 'gcc'
+  if warning_level == 'everything'
+    c_suppressions += [
+      '-Wno-switch-default',
+    ]
+  endif
+
+elif cc.get_id() == 'msvc'
+  if warning_level == 'everything'
+    c_suppressions += [
+      '/wd4711', # function selected for automatic inline expansion
+      '/wd4800', # implicit conversion to bool
+      '/wd5045', # will insert Spectre mitigation
+    ]
+  endif
+
+  if warning_level in ['everything', '3']
+    c_suppressions += [
+      '/wd4706', # assignment within conditional expression
+    ]
+  endif
 endif
-subdir('meson/suppressions')
+
+c_suppressions = cc.get_supported_arguments(c_suppressions)
 
 ##########################
 # Platform Configuration #
