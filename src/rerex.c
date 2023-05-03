@@ -117,7 +117,7 @@ static StateIndex
 add_state(StateArray* const array, const State state)
 {
   const size_t new_index    = array->n_states;
-  const size_t new_n_states = new_index + 1;
+  const size_t new_n_states = new_index + 1U;
   const size_t new_size     = new_n_states * sizeof(State);
   State* const new_states   = (State*)realloc(array->states, new_size);
 
@@ -736,7 +736,7 @@ rerex_match(RerexMatcher* const matcher, const char* const string)
   enter_state(matcher, 0, &matcher->active[0], matcher->regexp->start);
 
   // Tick the matcher for every input character
-  bool phase = 0;
+  bool phase = false;
   for (size_t i = 0; string[i]; ++i) {
     const char       c         = string[i];
     IndexList* const list      = &matcher->active[phase];
