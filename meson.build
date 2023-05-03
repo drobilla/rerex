@@ -1,15 +1,18 @@
 # Copyright 2020-2023 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-project('rerex', ['c'],
-        version: '0.0.1',
-        license: 'ISC',
-        meson_version: '>= 0.54.0',
-        default_options: [
-          'b_ndebug=if-release',
-          'buildtype=release',
-          'c_std=c99',
-        ])
+project(
+  'rerex',
+  ['c'],
+  default_options: [
+    'b_ndebug=if-release',
+    'buildtype=release',
+    'c_std=c99',
+  ],
+  license: 'ISC',
+  meson_version: '>= 0.54.0',
+  version: '0.0.1',
+)
 
 rerex_src_root = meson.current_source_dir()
 rerex_build_root = meson.current_build_dir()

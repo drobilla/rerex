@@ -5,17 +5,23 @@ if get_option('lint')
   # Check release metadata
   autoship = find_program('autoship', required: false)
   if autoship.found()
-    test('autoship', autoship,
-         args: ['test', rerex_src_root],
-         suite: 'data')
+    test(
+      'autoship',
+      autoship,
+      args: ['test', rerex_src_root],
+      suite: 'data',
+    )
   endif
 
   # Check licensing metadata
   reuse = find_program('reuse', required: false)
   if reuse.found()
-    test('REUSE', reuse,
-         args: ['--root', rerex_src_root, 'lint'],
-         suite: 'data')
+    test(
+      'REUSE',
+      reuse,
+      args: ['--root', rerex_src_root, 'lint'],
+      suite: 'data',
+    )
   endif
 
   # Check code with cppcheck
@@ -23,12 +29,17 @@ if get_option('lint')
     cppcheck = find_program('cppcheck', required: false)
     if cppcheck.found()
       compdb_path = join_paths(rerex_build_root, 'compile_commands.json')
-      test('cppcheck', cppcheck,
-           args: ['-q',
-                  '--error-exitcode=1',
-                  '--enable=warning,style,performance,portability',
-                  '--project=' + compdb_path],
-           suite: 'code')
+      test(
+        'cppcheck',
+        cppcheck,
+        args: [
+          '-q',
+          '--error-exitcode=1',
+          '--enable=warning,style,performance,portability',
+          '--project=' + compdb_path,
+        ],
+        suite: 'code',
+      )
     endif
   endif
 endif
@@ -37,13 +48,17 @@ endif
 foreach name : ['syntax', 'match', 'xsd']
   full_name = 'test_@0@'.format(name)
   source = files('@0@.c'.format(full_name))
-  test(full_name,
-       executable(full_name,
-                  source,
-                  c_args: c_suppressions,
-                  dependencies: rerex_dep,
-                  include_directories: include_dirs),
-       suite: 'unit')
+  test(
+    full_name,
+    executable(
+      full_name,
+      source,
+      c_args: c_suppressions,
+      dependencies: rerex_dep,
+      include_directories: include_dirs,
+    ),
+    suite: 'unit',
+  )
 endforeach
 
 # Set up warning suppressions for header test
@@ -57,9 +72,13 @@ if cc.get_id() in ['clang', 'emscripten']
 endif
 
 # Test that header has no warnings (ignoring suppressions for stricter dependants)
-test('test_headers',
-     executable('test_headers',
-                files('headers/test_headers.c'),
-                c_args: header_suppressions,
-                dependencies: rerex_dep,
-                include_directories: include_dirs))
+test(
+  'test_headers',
+  executable(
+    'test_headers',
+    files('headers/test_headers.c'),
+    c_args: header_suppressions,
+    dependencies: rerex_dep,
+    include_directories: include_dirs,
+  ),
+)
