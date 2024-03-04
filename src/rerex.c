@@ -15,30 +15,22 @@ static const char cmax = 0x7E; // Inclusive maximum normal character
 const char*
 rerex_strerror(const RerexStatus status)
 {
-  switch (status) {
-  case REREX_SUCCESS:
-    return "Success";
-  case REREX_EXPECTED_CHAR:
-    return "Expected a regular character";
-  case REREX_EXPECTED_ELEMENT:
-    return "Expected a character in a set";
-  case REREX_EXPECTED_RBRACKET:
-    return "Expected ']'";
-  case REREX_EXPECTED_RPAREN:
-    return "Expected ')'";
-  case REREX_EXPECTED_SPECIAL:
-    return "Expected a special character (one of \"()*+-?[]^|\")";
-  case REREX_UNEXPECTED_SPECIAL:
-    return "Unexpected special character";
-  case REREX_UNEXPECTED_END:
-    return "Unexpected end of input";
-  case REREX_UNORDERED_RANGE:
-    return "Range is out of order";
-  case REREX_NO_MEMORY:
-    return "Failed to allocate memory";
-  }
+  static const char* status_strings[] = {
+    "Success",
+    "Expected a regular character",
+    "Expected a character in a set",
+    "Expected ']'",
+    "Expected ')'",
+    "Expected a special character (one of \"()*+-?[]^|\")",
+    "Unexpected special character",
+    "Unexpected end of input",
+    "Range is out of order",
+    "Failed to allocate memory",
+  };
 
-  return "Unknown error";
+  return ((unsigned)status <= (unsigned)REREX_NO_MEMORY)
+           ? status_strings[status]
+           : "Unknown error";
 }
 
 /* State */
@@ -273,25 +265,9 @@ read_expr(Input* input, StateArray* states, Automata* out);
 static bool
 is_special(const char c)
 {
-  switch (c) {
-  case '(':
-  case ')':
-  case '*':
-  case '+':
-  case '.':
-  case '?':
-  case '[':
-  case ']':
-  case '^':
-  case '{':
-  case '|':
-  case '}':
-    return true;
-  default:
-    break;
-  }
-
-  return false;
+  return (c == '(') || (c == ')') || (c == '*') || (c == '+') || (c == '.') ||
+         (c == '?') || (c == '[') || (c == ']') || (c == '^') || (c == '{') ||
+         (c == '|') || (c == '}');
 }
 
 // DOT ::= '.'
