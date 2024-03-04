@@ -1,4 +1,4 @@
-// Copyright 2020-2021 David Robillard <d@drobilla.net>
+// Copyright 2020-2024 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "rerex/rerex.h"
@@ -392,31 +392,21 @@ read_range(Input* const      input,
 {
   RerexStatus st  = REREX_SUCCESS;
   char        min = 0;
-  char        max = 0;
 
   // Read the first (or only) character
   if ((st = read_element(input, &min))) {
     return st;
   }
 
-  // Handle '-' which is a bit hairy because it may or may not be special
+  char max = min;
   if (peek(input) == '-') {
-    switch (peekahead(input)) {
-    case ']':
-      // Weird case like [a-] where '-' is a character
-      max = min;
-      break;
-    default:
-      // Normal range like [a-z] (note that '[' isn't special here)
+    // The '-' is only special if there's a following element
+    if (peekahead(input) != ']') {
       eat(input);
       if ((st = read_element(input, &max))) {
         return st;
       }
-      break;
     }
-  } else {
-    // Single character element
-    max = min;
   }
 
   if (max < min) {
