@@ -35,6 +35,7 @@ if cc.get_id() == 'clang'
   if warning_level == 'everything'
     c_suppressions += [
       '-Wno-declaration-after-statement',
+      '-Wno-unsafe-buffer-usage',
     ]
 
     if not meson.is_cross_build()
