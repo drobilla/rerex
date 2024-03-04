@@ -13,14 +13,20 @@ dev:
     - meson setup build -Dbuildtype=debug -Dwarning_level=3 -Dwerror=true -Db_coverage=true -Dlint=true
     - ninja -C build test
     - ninja -C build coverage-html
+    - ninja -C build coverage-xml
     - meson configure -Dbuildtype=release -Db_coverage=false build
     - ninja -C build test
   coverage: '/ *lines\.*: \d+\.\d+.*/'
   artifacts:
+    when: always
     paths:
+      - build/meson-logs/coverage.xml
       - build/meson-logs/coveragereport
       - build/meson-logs/testlog.junit.xml
     reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/meson-logs/coverage.xml
       junit: build/meson-logs/testlog.junit.xml
 
 static:
