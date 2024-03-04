@@ -19,6 +19,9 @@ dev:
   artifacts:
     paths:
       - build/meson-logs/coveragereport
+      - build/meson-logs/testlog.junit.xml
+    reports:
+      junit: build/meson-logs/testlog.junit.xml
 
 static:
   image: lv2plugin/debian-x64
