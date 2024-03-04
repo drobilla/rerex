@@ -1,0 +1,14 @@
+# Copyright 2021-2024 David Robillard <d@drobilla.net>
+# SPDX-License-Identifier: 0BSD OR ISC
+
+Checks: >
+  *,
+  -altera-*,
+  -llvmlibc-*,
+  -readability-identifier-length,
+WarningsAsErrors: '*'
+HeaderFilterRegex: 'rerex/.*\.h'
+FormatStyle: file
+CheckOptions:
+  - key:   readability-function-cognitive-complexity.Threshold
+    value: '11'
