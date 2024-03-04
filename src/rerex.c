@@ -756,7 +756,7 @@ rerex_match(RerexMatcher* const matcher, const char* const string)
   }
 
   // Check if match state is entered in the end
-  IndexList* const active = &matcher->active[phase];
+  const IndexList* const active = &matcher->active[phase];
   for (size_t i = 0; i < active->n_indices; ++i) {
     if (states->states[active->indices[i]].min == REREX_MATCH) {
       return true;
