@@ -43,8 +43,6 @@ rerex_strerror(const RerexStatus status)
 
 /* State */
 
-#define NO_STATE 0
-
 // The ID for a state, which is an index into the state array
 typedef size_t StateIndex;
 
@@ -72,6 +70,9 @@ typedef struct {
   Codepoint  min;   ///< Special type, or inclusive min label for next1
   Codepoint  max;   ///< Inclusive max label for next2
 } State;
+
+// Sentinel value for an unset state index
+static const StateIndex NO_STATE = 0U;
 
 // Create a match (end) state with no successors
 static State

@@ -5,5 +5,4 @@ Checks: >
   -bugprone-assignment-in-if-condition,
   -hicpp-multiway-paths-covered,
   -misc-no-recursion,
-  -modernize-macro-to-enum,
 InheritParentConfig: true
