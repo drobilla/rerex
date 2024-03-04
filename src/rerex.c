@@ -307,13 +307,12 @@ read_char(Input* const input, char* const out)
 {
   const char c = peek(input);
 
-  switch (c) {
-  case '\0':
+  if (c == '\0') {
     return REREX_UNEXPECTED_END;
-  case '\\':
+  }
+
+  if (c == '\\') {
     return read_escape(input, out);
-  default:
-    break;
   }
 
   if (is_special(c)) {
@@ -334,12 +333,15 @@ read_element(Input* const input, char* const out)
 {
   const char c = peek(input);
 
-  switch (c) {
-  case '\0':
+  if (c == '\0') {
     return REREX_UNEXPECTED_END;
-  case ']':
+  }
+
+  if (c == ']') {
     return REREX_UNEXPECTED_SPECIAL;
-  case '\\':
+  }
+
+  if (c == '\\') {
     eat(input);
     if (peek(input) != ']') {
       return REREX_EXPECTED_RBRACKET;
@@ -347,8 +349,6 @@ read_element(Input* const input, char* const out)
 
     *out = eat(input);
     return REREX_SUCCESS;
-  default:
-    break;
   }
 
   if (c >= cmin && c <= cmax) {
@@ -442,9 +442,9 @@ static RerexStatus
 read_atom(Input* const input, StateArray* const states, Automata* const out)
 {
   RerexStatus st = REREX_SUCCESS;
+  char        c  = peek(input);
 
-  switch (peek(input)) {
-  case '(':
+  if (c == '(') {
     eat(input);
     if ((st = read_expr(input, states, out))) {
       return st;
@@ -456,11 +456,13 @@ read_atom(Input* const input, StateArray* const states, Automata* const out)
 
     eat(input);
     return st;
+  }
 
-  case '.':
+  if (c == '.') {
     return read_dot(input, states, out);
+  }
 
-  case '[':
+  if (c == '[') {
     eat(input);
     if ((st = read_set(input, states, out))) {
       return st;
@@ -468,12 +470,8 @@ read_atom(Input* const input, StateArray* const states, Automata* const out)
 
     eat(input);
     return st;
-
-  default:
-    break;
   }
 
-  char c = 0;
   if ((st = read_char(input, &c))) {
     return st;
   }
@@ -496,22 +494,17 @@ read_factor(Input* const input, StateArray* const states, Automata* const out)
 
   if (!(st = read_atom(input, states, &atom_nfa))) {
     const char c = peek(input);
-    switch (c) {
-    case '*':
+    if (c == '*') {
       eat(input);
       *out = star(states, atom_nfa);
-      break;
-    case '+':
+    } else if (c == '+') {
       eat(input);
       *out = plus(states, atom_nfa);
-      break;
-    case '?':
+    } else if (c == '?') {
       eat(input);
       *out = question(states, atom_nfa);
-      break;
-    default:
+    } else {
       *out = atom_nfa;
-      break;
     }
   }
 
@@ -527,17 +520,11 @@ read_term(Input* const input, StateArray* const states, Automata* const out)
   Automata    term_nfa   = {NO_STATE, NO_STATE};
 
   if (!(st = read_factor(input, states, &factor_nfa))) {
-    switch (peek(input)) {
-    case '\0':
-    case ')':
-    case '|':
+    const char c = peek(input);
+    if (c == '\0' || c == ')' || c == '|') {
       *out = factor_nfa;
-      break;
-    default:
-      if (!(st = read_term(input, states, &term_nfa))) {
-        *out = concatenate(states, factor_nfa, term_nfa);
-      }
-      break;
+    } else if (!(st = read_term(input, states, &term_nfa))) {
+      *out = concatenate(states, factor_nfa, term_nfa);
     }
   }
 

@@ -3,6 +3,5 @@
 
 Checks: >
   -bugprone-assignment-in-if-condition,
-  -hicpp-multiway-paths-covered,
   -misc-no-recursion,
 InheritParentConfig: true

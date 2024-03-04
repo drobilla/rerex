@@ -45,13 +45,6 @@ if cc.get_id() == 'clang'
     endif
   endif
 
-elif cc.get_id() == 'gcc'
-  if warning_level == 'everything'
-    c_suppressions += [
-      '-Wno-switch-default',
-    ]
-  endif
-
 elif cc.get_id() == 'msvc'
   if warning_level == 'everything'
     c_suppressions += [
