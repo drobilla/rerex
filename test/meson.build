@@ -1,7 +1,7 @@
 # Copyright 2020-2022 David Robillard <d@drobilla.net>
 # SPDX-License-Identifier: 0BSD OR ISC
 
-if get_option('lint')
+if not meson.is_subproject() and get_option('lint')
   # Check release metadata
   autoship = find_program('autoship', required: false)
   if autoship.found()
