@@ -3,4 +3,5 @@
 
 Checks: >
   -bugprone-easily-swappable-parameters,
+  -clang-analyzer-optin.core.EnumCastOutOfRange,
 InheritParentConfig: true
