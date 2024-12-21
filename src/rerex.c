@@ -143,7 +143,7 @@ make_automata(const StateIndex start, const StateIndex end)
 }
 
 // Return whether `nfa` has only two simple states (used for optimizations)
-static inline bool
+static bool
 is_trivial(const StateArray* const states, const Automata nfa)
 {
   return (states->states[nfa.start].min < REREX_MATCH &&
@@ -234,14 +234,14 @@ typedef struct {
 } Input;
 
 // Return the next character in the input without consuming it
-static inline char
+static char
 peek(Input* const input)
 {
   return input->str[input->offset];
 }
 
 // Return the next-next character in the input without consuming any
-static inline char
+static char
 peekahead(Input* const input)
 {
   // Unfortunately we need 2-char lookahead for the ambiguity of '-' in sets
@@ -249,7 +249,7 @@ peekahead(Input* const input)
 }
 
 // Consume and return the next character in the input
-static inline char
+static char
 eat(Input* const input)
 {
   return input->str[input->offset++];
