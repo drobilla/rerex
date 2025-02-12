@@ -110,7 +110,7 @@ rerex_dep = declare_dependency(
   link_with: librerex,
 )
 
-# Generage pkg-config file for external dependants
+# Generate pkg-config file for external dependants
 pkg.generate(
   librerex,
   description: 'A simple and efficient regular expression implementation',
