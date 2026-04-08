@@ -21,7 +21,7 @@
 #endif
 
 // GCC function attributes
-#if defined(__GNUC__)
+#ifdef __GNUC__
 #  define REREX_CONST_API __attribute__((const)) REREX_API
 #else
 #  define REREX_CONST_API REREX_API

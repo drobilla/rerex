@@ -1,9 +1,9 @@
-// Copyright 2022 David Robillard <d@drobilla.net>
+// Copyright 2022-2026 David Robillard <d@drobilla.net>
 // SPDX-License-Identifier: ISC
 
 #include "rerex/rerex.h" // IWYU pragma: keep
 
-#if defined(__GNUC__)
+#ifdef __GNUC__
 __attribute__((const))
 #endif
 int
