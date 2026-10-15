@@ -235,14 +235,14 @@ typedef struct {
 
 // Return the next character in the input without consuming it
 static char
-peek(Input* const input)
+peek(const Input* const input)
 {
   return input->str[input->offset];
 }
 
 // Return the next-next character in the input without consuming any
 static char
-peekahead(Input* const input)
+peekahead(const Input* const input)
 {
   // Unfortunately we need 2-char lookahead for the ambiguity of '-' in sets
   return input->str[input->offset + 1];
