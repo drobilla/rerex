@@ -13,7 +13,7 @@ jobs:
   default:
     runs-on: docker
     container:
-      image: lv2plugin/debian-gcc
+      image: lv2plugin/debian-gcc:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -29,7 +29,7 @@ jobs:
   dev:
     runs-on: docker
     container:
-      image: drobilla/debian-gcc-dev:20260710
+      image: lv2plugin/debian-gcc-dev:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -51,7 +51,7 @@ jobs:
   cpp:
     runs-on: docker
     container:
-      image: drobilla/debian-gcc:20260710
+      image: lv2plugin/debian-gcc:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -65,7 +65,7 @@ jobs:
   sanitize:
     runs-on: docker
     container:
-      image: drobilla/debian-clang:20260710
+      image: lv2plugin/debian-clang:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -87,7 +87,7 @@ jobs:
   fedora:
     runs-on: docker
     container:
-      image: drobilla/fedora-dev:20260710
+      image: lv2plugin/fedora-dev:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -109,7 +109,7 @@ jobs:
   armhf:
     runs-on: docker
     container:
-      image: drobilla/debian-gcc-armhf:20260710
+      image: lv2plugin/debian-gcc-armhf:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -131,7 +131,7 @@ jobs:
   arm64:
     runs-on: docker
     container:
-      image: drobilla/debian-gcc-arm64:20260710
+      image: lv2plugin/debian-gcc-arm64:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -153,7 +153,7 @@ jobs:
   i386:
     runs-on: docker
     container:
-      image: drobilla/debian-gcc-i386:20260710
+      image: lv2plugin/debian-gcc-i386:20261014
     steps:
       - name: 'Clone'
         run: >
@@ -175,7 +175,7 @@ jobs:
   mingw32:
     runs-on: docker
     container:
-      image: drobilla/debian-mingw32:20260710
+      image: lv2plugin/debian-mingw32:20261014
     env:
       WINEPATH: "Z:\\usr\\lib\\gcc\\i686-w64-mingw32\\12-win32"
     steps:
@@ -199,7 +199,7 @@ jobs:
   mingw64:
     runs-on: docker
     container:
-      image: drobilla/debian-mingw64:20260710
+      image: lv2plugin/debian-mingw64:20261014
     env:
       WINEPATH: "Z:\\usr\\lib\\gcc\\x86_64-w64-mingw32\\12-win32"
     steps:
@@ -223,7 +223,7 @@ jobs:
   wasm:
     runs-on: docker
     container:
-      image: drobilla/debian-wasm:20260710
+      image: lv2plugin/debian-wasm:20261014
     steps:
       - name: 'Clone'
         run: >
